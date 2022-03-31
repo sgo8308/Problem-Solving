@@ -1,4 +1,4 @@
-package algorythm.Practice.Leetcode.step3;
+package algorythm.Practice.programmers.step3;
 
 import java.util.Collections;
 
