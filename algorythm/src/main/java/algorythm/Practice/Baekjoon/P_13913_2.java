@@ -22,7 +22,6 @@ public class P_13913_2 {
     static int N;
     static int K;
     public static void main(String[] args) throws Exception{
-        HashMap
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
