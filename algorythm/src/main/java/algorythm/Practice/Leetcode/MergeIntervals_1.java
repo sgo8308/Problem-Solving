@@ -1,15 +1,17 @@
 package algorythm.Practice.Leetcode;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.List;
 
 public class MergeIntervals_1 {
 
     public static void main(String[] args) throws Exception{
-        int[][] m = {{1, 4}, {0, 0}};
-        int[][] s = merge(m);
+        int[][] m = {{1, 4}, {3, 5}};
+        int[][] s = merge2(m);
         for (int i = 0; i < s.length; i++) {
             System.out.println(Arrays.toString(s[i]));
         }
@@ -58,5 +60,22 @@ public class MergeIntervals_1 {
 
         return newIntervals;
     }
-    //2
+    //2 O(NlogN)
+    static public int[][] merge2(int[][] intervals) {
+        Arrays.sort(intervals, Comparator.comparing(x1 -> x1[0]));
+        Deque<int[]> q = new ArrayDeque<>();
+        q.addLast(intervals[0]);
+
+        for (int i = 1; i < intervals.length; i++) {
+            if (q.peekLast()[1] >= intervals[i][1]) {
+                continue;
+            } else if (q.peekLast()[1] >= intervals[i][0]) {
+                q.peekLast()[1] = intervals[i][1];
+            } else {
+                q.addLast(intervals[i]);
+            }
+        }
+
+        return q.toArray(new int[q.size()][]);
+    }
 }
