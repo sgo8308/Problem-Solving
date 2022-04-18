@@ -28,7 +28,7 @@ public class ThreeSum_1 {
             map.put(nums[i], map.get(nums[i]) + 1);
         }
 
-        Set<List<Integer>> answerSet = new HashSet<>(nums.length * 2);
+        Set<List<Integer>> answerSet = new HashSet<>(nums.length * nums.length);
         for (Integer target : map.keySet()) {
             for (Integer cand1 : map.keySet()) {
                 int cand2 = -target - cand1;
