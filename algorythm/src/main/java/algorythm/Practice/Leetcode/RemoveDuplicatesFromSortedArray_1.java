@@ -26,5 +26,4 @@ public class RemoveDuplicatesFromSortedArray_1 {
 
         return k;
     }
-
 }
