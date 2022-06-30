@@ -39,8 +39,7 @@ public class P_1004_1 {
         int max = Integer.MIN_VALUE;
 
         while (right < nums.length) {
-
-            if (canMoveRight(nums, right, k)) {
+            if (nums[right] == 1 || k > 0) {
                 if(nums[right] == 0) k--;
                 right++;
             } else {
@@ -49,19 +48,8 @@ public class P_1004_1 {
             }
 
             max = Math.max(max, right - left);
-
-            if (left == right && !canMoveRight(nums, right, k)) {
-                while (!canMoveRight(nums, right, k) && right < nums.length) {
-                    right++;
-                    left++;
-                }
-            }
         }
 
         return max;
-    }
-
-    private static boolean canMoveRight(int[] nums, int right, int k) {
-        return nums[right] == 1 || k > 0;
     }
 }
