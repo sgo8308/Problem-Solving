@@ -1,7 +1,10 @@
 package algorythm.Practice.Baekjoon;
 
 import java.io.BufferedReader;
+
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 public class P_1343_1 {
@@ -9,6 +12,8 @@ public class P_1343_1 {
     //조건 2. 사전순으로 가장 앞서는 답 출력
 
     public static void main(String[] args) throws Exception {
+        Map<String, Integer> a = new HashMap<>();
+        a.merge("sd,;", 1, Integer::sum);
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
