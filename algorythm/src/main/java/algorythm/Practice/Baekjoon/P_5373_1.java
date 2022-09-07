@@ -26,21 +26,23 @@ public class P_5373_1 {
                 char dir = line.charAt(0);
                 char subDir = line.charAt(1);
 
-                cube.turnLayer(dir, subDir);
+                for (int k = 0; k < 12; k++) {
+                    System.out.print(cube.leftRound[k].color + " ");
+                }
+                System.out.println();
+                cube.turn(dir, subDir);
+                for (int k = 0; k < 12; k++) {
+                    System.out.print(cube.leftRound[k].color + " ");
+                }
             }
 
             StringBuilder sb = new StringBuilder();
-            sb.append(cube.back[5].color);
-            sb.append(cube.back[4].color);
-            sb.append(cube.back[3].color);
-            sb.append("\n");
-            sb.append(cube.left[4].color);
-            sb.append('w');
-            sb.append(cube.right[4].color);
-            sb.append("\n");
-            sb.append(cube.front[3].color);
-            sb.append(cube.front[4].color);
-            sb.append(cube.front[5].color);
+            for (int j = 0; j < 3; j++) {
+                for (int k = 0; k < 3; k++) {
+                    sb.append(cube.upSection[j][k].color);
+                }
+                sb.append("\n");
+            }
             System.out.println(sb);
         }
     }
@@ -51,21 +53,78 @@ public class P_5373_1 {
     static char[] rightColor = {'r', 'w', 'o', 'y'};
     static char[] frontColor = {'g', 'w', 'b', 'y'};
     static char[] backColor = {'b', 'w', 'g', 'y'};
+
     static class Cube {
-        Point[] up = new Point[12];
-        Point[] down = new Point[12];
-        Point[] left = new Point[12];
-        Point[] right = new Point[12];
-        Point[] front = new Point[12];
-        Point[] back = new Point[12];
+
+        Point[] upRound = new Point[12];
+        Point[] downRound = new Point[12];
+        Point[] leftRound = new Point[12];
+        Point[] rightRound = new Point[12];
+        Point[] frontRound = new Point[12];
+        Point[] backRound = new Point[12];
+
+        Point[][] upSection;
+        Point[][] downSection;
+        Point[][] leftSection;
+        Point[][] rightSection;
+        Point[][] frontSection;
+        Point[][] backSection;
 
         Cube() {
-            allocate(up, upColor);
-            allocate(down, downColor);
-            allocate(left, leftColor);
-            allocate(right, rightColor);
-            allocate(front, frontColor);
-            allocate(back, backColor);
+            allocate(upRound, upColor);
+            allocate(downRound, downColor);
+            allocate(leftRound, leftColor);
+            allocate(rightRound, rightColor);
+            allocate(frontRound, frontColor);
+            allocate(backRound, backColor);
+
+            Point[][] forUp = {
+                    {backRound[5], backRound[4], backRound[3]},
+                    {leftRound[4], new Point('w'), rightRound[4]},
+                    {frontRound[3], frontRound[4], frontRound[5]}
+            };
+
+            upSection = forUp;
+
+            Point[][] forDown = {
+                    {frontRound[11], frontRound[10], frontRound[9]},
+                    {leftRound[10], new Point('y'), rightRound[10]},
+                    {backRound[9], backRound[10], backRound[11]}
+            };
+
+            downSection = forDown;
+
+            Point[][] forLeft = {
+                    {upRound[2], upRound[1], upRound[0]},
+                    {backRound[7], new Point('g'), frontRound[1]},
+                    {downRound[0], downRound[1], downRound[2]}
+            };
+
+            leftSection = forLeft;
+
+            Point[][] forRight = {
+                    {upRound[8], upRound[7], upRound[6]},
+                    {frontRound[7], new Point('b'), backRound[1]},
+                    {downRound[6], downRound[7], downRound[8]}
+            };
+
+            rightSection = forRight;
+
+            Point[][] forFront = {
+                    {upRound[11], upRound[10], upRound[9]},
+                    {leftRound[7], new Point('r'), rightRound[1]},
+                    {downRound[3], downRound[4], downRound[5]}
+            };
+
+            frontSection = forFront;
+
+            Point[][] forBack = {
+                    {upRound[5], upRound[4], upRound[3]},
+                    {rightRound[7], new Point('o'), leftRound[1]},
+                    {downRound[9], downRound[10], downRound[11]}
+            };
+
+            backSection = forBack;
         }
 
         void allocate(Point[] layer, char[] colors) {
@@ -76,74 +135,90 @@ public class P_5373_1 {
             }
         }
 
-        void turnLayer(char dir, char subDir) {
+        private void turn(char dir, char subDir) {
             switch (dir) {
                 case 'U':
-                    move(up, subDir);
+                    rotate(upSection, subDir);
+                    turnRound(upRound, subDir);
                     break;
                 case 'D':
-                    move(down, subDir);
+                    rotate(downSection, subDir);
+                    turnRound(downRound, subDir);
                     break;
                 case 'L':
-                    move(left, subDir);
+                    rotate(leftSection, subDir);
+                    turnRound(leftRound, subDir);
                     break;
                 case 'R':
-                    move(right, subDir);
+                    rotate(rightSection, subDir);
+                    turnRound(rightRound, subDir);
                     break;
                 case 'F':
-                    move(front, subDir);
+                    rotate(frontSection, subDir);
+                    turnRound(frontRound, subDir);
                     break;
                 case 'B':
-                    move(back, subDir);
+                    rotate(backSection, subDir);
+                    turnRound(backRound, subDir);
                     break;
             }
-
         }
+
         // + 일 때는 --->> ,  - 일 때는 <<--- 방향으로 3칸씩 옮기기
-
-        private void move(Point[] layer, char subDir) {
-            if(subDir == '+'){
-                char[] temp = {layer[0].color, layer[1].color, layer[2].color};
-                for (int i = 9; i >= 0 ; i -= 3) {
-                    for (int j = i; j < 3; j++) {
-                        layer[(j + 3) % 12].color = layer[j].color;
-
+        private void turnRound(Point[] layer, char subDir) {
+            for (int k = 0; k < 3; k++) {
+                if (subDir == '+') {
+                    char temp = layer[0].color;
+                    for (int i = 11; i >= 0; i--) {
+                        layer[(i + 1) % 12].color = layer[i].color;
                     }
-                }
-                for (int i = 0; i < 3; i++) {
-                    layer[(i + 3) % 12].color = temp[i];
-                }
-            }else{
-                char[] temp = {layer[9].color, layer[10].color, layer[11].color};
-                for (int i = 0; i < 12 ; i += 3) {
-                    for (int j = i; j < 3; j++) {
-                        layer[(j + 9) % 12].color = layer[j].color;
+                    layer[1].color = temp;
+                } else {
+                    char temp = layer[0].color;
+                    for (int i = 1; i < 12; i++) {
+                        layer[(i - 1) % 12].color = layer[i].color;
                     }
-                }
-                for (int i = 6; i < 9; i++) {
-                    layer[(i + 9) % 12].color = temp[i - 6];
+                    layer[11].color = temp;
                 }
             }
         }
-    }
 
-    class Layer {
+        private void rotate(Point[][] section, char subDir) {
+            if (subDir == '+') {
+               rotate90(section);
+            }else {
+                rotate270(section);
+            }
+        }
 
-        Point[] points = new Point[9];
-        Point[] top;
-        Point[] left;
-        Point[] right;
-        Point[] bottom;
-
-        Layer(char color) {
-            for (int i = 0; i < 9; i++) {
-                points[i] = new Point(color);
+        static void rotate90(Point[][] section) {
+            char[][] rotate = new char[3][3];
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    rotate[i][j] = section[i][j].color;
+                }
             }
 
-            top = new Point[]{points[0], points[1], points[2]};
-            left = new Point[]{points[0], points[3], points[6]};
-            right = new Point[]{points[2], points[5], points[8]};
-            bottom = new Point[]{points[6], points[7], points[8]};
+            for (int i = 0; i < rotate.length; i++) {
+                for (int j = 0; j < rotate[i].length; j++) {
+                    section[i][j].color = rotate[3 - 1 - j][i];
+                }
+            }
+        }
+
+        static void rotate270(Point[][] section) {
+            char[][] rotate = new char[3][3];
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    rotate[i][j] = section[i][j].color;
+                }
+            }
+
+            for (int i = 0; i < rotate.length; i++) {
+                for (int j = 0; j < rotate[i].length; j++) {
+                    section[i][j].color = rotate[j][3 - 1 - i];
+                }
+            }
         }
     }
 
@@ -155,8 +230,6 @@ public class P_5373_1 {
             this.color = color;
         }
     }
-
-
 }
 
 
